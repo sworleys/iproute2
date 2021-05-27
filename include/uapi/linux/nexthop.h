@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-#ifndef _LINUX_NEXTHOP_H
-#define _LINUX_NEXTHOP_H
+#ifndef _UAPI_LINUX_NEXTHOP_H
+#define _UAPI_LINUX_NEXTHOP_H
 
 #include <linux/types.h>
 
@@ -39,7 +39,11 @@ enum {
 	/* if NHA_GROUP attribute is added, no other attributes can be set */
 
 	NHA_BLACKHOLE,	/* flag; nexthop used to blackhole packets */
-	/* if NHA_BLACKHOLE is added, OIF, GATEWAY, ENCAP can not be set */
+	NHA_UNREACHABLE,/* flag; nexthop is unreacable */
+	NHA_PROHIBIT,	/* flag; nexthop adiminstratively prohibited */
+	/* Only one of BLACKHOLE, UNREACHABLE, or PROHIBIT can be set.
+	 * OIF, GATEWAY, ENCAP can not be set if any of them they are.
+	 */
 
 	NHA_OIF,	/* u32; nexthop device */
 	NHA_GATEWAY,	/* be32 (IPv4) or in6_addr (IPv6) gw address */
@@ -53,7 +57,7 @@ enum {
 	NHA_MASTER,	/* u32;  only return nexthops with given master dev */
 
 	NHA_FDB,	/* flag; nexthop belongs to a bridge fdb */
-	/* if NHA_FDB is added, OIF, BLACKHOLE, ENCAP cannot be set */
+	/* if NHA_FDB is added, OIF, BLACKHOLE, UNREACHABLE, PROHIBIT, ENCAP cannot be set */
 
 	/* nested; resilient nexthop group attributes */
 	NHA_RES_GROUP,

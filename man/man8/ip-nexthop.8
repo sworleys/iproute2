@@ -57,7 +57,9 @@ ip-nexthop \- nexthop object management
 
 .ti -8
 .IR NH " := { "
-.BR blackhole " | [ "
+.BR blackhole " | "
+.BR unreachable " | "
+.BR prohibit " | [ "
 .B  via
 .IR ADDRESS " ] [ "
 .B  dev
@@ -201,6 +203,12 @@ rebalancing will take place. Default is 0 seconds
 .TP
 .B blackhole
 create a blackhole nexthop
+.TP
+.B unreachable
+create a unreachable nexthop
+.TP
+.B prohibit
+create a prohibit nexthop
 .TP
 .B fdb
 nexthop and nexthop groups for use with layer-2 fdb entries.

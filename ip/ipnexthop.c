@@ -46,8 +46,8 @@ static void usage(void)
 		"SELECTOR := [ id ID ] [ dev DEV ] [ vrf NAME ] [ master DEV ]\n"
 		"            [ groups ] [ fdb ]\n"
 		"BUCKET_SELECTOR := SELECTOR | [ nhid ID ]\n"
-		"NH := { blackhole | [ via ADDRESS ] [ dev DEV ] [ onlink ]\n"
-		"        [ encap ENCAPTYPE ENCAPHDR ] |\n"
+		"NH := { blackhole | unreachable | prohibit | [ via ADDRESS ]\n"
+		"        [ dev DEV ] [ onlink ] [ encap ENCAPTYPE ENCAPHDR ] |\n"
 		"        group GROUP [ fdb ] [ type TYPE [ TYPE_ARGS ] ] }\n"
 		"GROUP := [ <id[,weight]>/<id[,weight]>/... ]\n"
 		"TYPE := { mpath | resilient }\n"
@@ -391,6 +391,12 @@ int print_nexthop(struct nlmsghdr *n, void *arg)
 	if (tb[NHA_BLACKHOLE])
 		print_null(PRINT_ANY, "blackhole", "blackhole ", NULL);
 
+	if (tb[NHA_UNREACHABLE])
+		print_null(PRINT_ANY, "unreachable", "uncreachabe ", NULL);
+
+	if (tb[NHA_PROHIBIT])
+		print_null(PRINT_ANY, "prohibit", "prohibit ", NULL);
+
 	if (nhm->nh_protocol != RTPROT_UNSPEC || show_details > 0) {
 		print_string(PRINT_ANY, "protocol", "proto %s ",
 			     rtnl_rtprot_n2a(nhm->nh_protocol, b1, sizeof(b1)));
@@ -674,6 +680,15 @@ static int ipnh_modify(int cmd, unsigned int flags, int argc, char **argv)
 			}
 		} else if (!strcmp(*argv, "blackhole")) {
 			addattr_l(&req.n, sizeof(req), NHA_BLACKHOLE, NULL, 0);
+			if (req.nhm.nh_family == AF_UNSPEC)
+				req.nhm.nh_family = AF_INET;
+		} else if (!strcmp(*argv, "unreachable")) {
+			addattr_l(&req.n, sizeof(req), NHA_UNREACHABLE, NULL,
+				  0);
+			if (req.nhm.nh_family == AF_UNSPEC)
+				req.nhm.nh_family = AF_INET;
+		} else if (!strcmp(*argv, "prohibit")) {
+			addattr_l(&req.n, sizeof(req), NHA_PROHIBIT, NULL, 0);
 			if (req.nhm.nh_family == AF_UNSPEC)
 				req.nhm.nh_family = AF_INET;
 		} else if (!strcmp(*argv, "fdb")) {
